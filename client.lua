@@ -1,22 +1,18 @@
-local x, y, z
-local dirX, dirY
-
 RegisterCommand('coordy', function()
 	local ped = PlayerPedId()
-	x, y, z = table.unpack(GetEntityCoords(ped, true))
-	heading = GetEntityHeading(ped)
-    dirX, dirY = table.unpack(GetEntityForwardVector(ped))
-	TriggerEvent("coordsSaver:saveCoord")
+	local x, y, z = table.unpack(GetEntityCoords(ped, true))
+	local heading = GetEntityHeading(ped)
+    local dirX, dirY = table.unpack(GetEntityForwardVector(ped))
+	TriggerEvent("coordsSaver:saveCoord", x, y, z, heading, dirX, dirY)
 end)
 
-RegisterNetEvent("coordsSaver:saveCoord")
-AddEventHandler("coordsSaver:saveCoord", function()
+AddEventHandler("coordsSaver:saveCoord", function(x, y, z, heading, dirX, dirY)
 	while true do 
 		Wait(0)
 		local ped = PlayerPedId()
 		FreezeEntityPosition(ped, true)
 		DisableControls()
-		drawTxt("x= "..desetina(x,2).." y= "..desetina(y,2).." z= "..desetina(z,2).." heading= "..desetina(heading,2))
+		drawTxt("x= "..tenth(x,2).." y= "..tenth(y,2).." z= "..tenth(z,2).." heading= "..tenth(heading,2))
 		DrawMarker(	
 				26, x, y, z,
 				dirX, dirY, 0,
@@ -41,7 +37,7 @@ AddEventHandler("coordsSaver:saveCoord", function()
                 
 		elseif IsDisabledControlPressed(0, 191) then 
 			SendNUIMessage({
-				coords = ""..desetina(x,2)..","..desetina(y,2)..","..desetina(z,2)..","..desetina(heading,2)
+				coords = ""..tenth(x,2)..","..tenth(y,2)..","..tenth(z,2)..","..tenth(heading,2)
 			})
 			FreezeEntityPosition(ped, false)
 			break
@@ -78,7 +74,7 @@ function drawTxt(text)
     DrawText(0.3,0.8)
 end
 
-function desetina(num, numDecimalPlaces) 
+function tenth(num, numDecimalPlaces) 
     local mult = 5^(numDecimalPlaces or 0)
     return math.floor(num * mult + 0.5) / mult
 end
